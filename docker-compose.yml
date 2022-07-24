@@ -1,0 +1,89 @@
+version: "3.9"
+services:
+  db:
+    # image: "postgres:13"
+    build: pg/postgres
+    container_name: "mypg"
+#    ~/.bashrc file with: #    export UID GID  or  .env file # UID=1000 # GID=1000
+    # user: "${UID}:${GID}"
+    privileged: true
+    environment:
+      POSTGRES_DB: "myproject"
+      POSTGRES_USER: "user"
+      POSTGRES_PASSWORD: "password"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    ports:
+      - "5432:5432"
+    volumes:
+##      - ../2. Init Database:/docker-entrypoint-initdb.d
+      # - .:/data:rw
+      # - pg_data:/var/lib/postgresql/data/pgdata
+      - ./pg/pgdata.img:/pgdata.img
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d myproject"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+    networks:
+      - postgres
+
+  pgadmin:
+    container_name: pgadmin
+#    image: dpage/pgadmin4
+    build: pg/pgadmin
+#    user: pgadmin
+    privileged: true
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@admin.ru"
+      PGADMIN_DEFAULT_PASSWORD: "admin"
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    volumes:
+#    sudo chown -R 5050:5050 pgadmin
+      # - ./pgadmin:/var/lib/pgadmin
+#      - ${DATA_PATH_HOST}/pgadmin:/var/lib/pgadmin
+#      - pg_admin_data:/var/lib/pgadmin
+      - ./pg/pgadmin.img:/pgadmin.img
+    ports:
+      - "5050:80"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512MB
+    networks:
+      - postgres
+    depends_on:
+      - db
+
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - ./tmp:/app/pg
+    networks:
+      - postgres
+    depends_on:
+      - db
+
+networks:
+  postgres:
+    driver: bridge
+
+volumes:
+#  pg_data:
+  pg_admin_data:
+
+
+
+# https://habr.com/ru/post/578744/
