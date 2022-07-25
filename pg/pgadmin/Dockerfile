@@ -1,4 +1,4 @@
-FROM dpage/pgadmin4
+FROM dpage/pgadmin4:latest
 USER root
 COPY startup.sh .
 RUN chmod +x ./startup.sh
