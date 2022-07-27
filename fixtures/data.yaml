@@ -1,0 +1,14 @@
+- model: news.userstypes
+  pk: 1
+  fields:
+    users_type: Администраторы
+
+- model: news.userstypes
+  pk: 2
+  fields:
+    users_type: Обычные пользователи
+
+- model: news.userstypes
+  pk: 3
+  fields:
+    users_type: Пользователи только для чтения

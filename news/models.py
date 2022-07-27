@@ -5,7 +5,7 @@ from django.contrib.auth.hashers import make_password, check_password
 
 
 class UsersTypes(models.Model):
-    users_type = models.CharField(max_length=20)
+    users_type = models.CharField(max_length=32)
 
     def __repr__(self):
         return f"***\n<class={__class__.__name__}>\n" \

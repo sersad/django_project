@@ -20,6 +20,9 @@
 
 docker-compose run web python manage.py startapp news
 
+загружаем фикстуры
+docker-compose run web python manage.py loaddata fixtures/data
+
 
 #### очистка всего старого в докере
 `docker system prune -a -f`

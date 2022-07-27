@@ -7,6 +7,7 @@ from .models import *
 def hello(request):
     users_type = UsersTypes.objects.all()
     users = Users.objects.all()
+
     return HttpResponse("Hello")
 
 
