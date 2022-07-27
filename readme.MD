@@ -18,5 +18,10 @@
 `docker-compose run web python manage.py createsuperuser`
 пароль `123`
 
+docker-compose run web python manage.py startapp news
+
+
 #### очистка всего старого в докере
 `docker system prune -a -f`
+
+
