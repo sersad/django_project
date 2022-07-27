@@ -28,3 +28,5 @@ docker-compose run web python manage.py loaddata fixtures/data
 `docker system prune -a -f`
 
 
+Руководство Django Часть 8: Аутентификация и авторизация пользователя - Изучение веб-разработки 
+https://developer.mozilla.org/ru/docs/Learn/Server-side/Django/Authentication
