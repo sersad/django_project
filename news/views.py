@@ -65,6 +65,13 @@ def index(request, category_id=0):
     # )
 
 
+class CategoriesMixin:
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        context['category'] = Category.objects.all()
+        return context
+
 class CategoriesListView(LoginRequiredMixin, ListView):
     login_url = 'login'
     redirect_field_name = 'categories'
@@ -80,7 +87,7 @@ class CategoriesListView(LoginRequiredMixin, ListView):
         return context
 
 
-class CategoryCreateView(LoginRequiredMixin, CreateView):
+class CategoryCreateView(LoginRequiredMixin, CategoriesMixin, CreateView):
     model = Category
     fields = ['name']
     template_name = 'category.html'
@@ -99,6 +106,8 @@ class CategoryCreateView(LoginRequiredMixin, CreateView):
         return form
 
 
-class CategoryDeleteView(LoginRequiredMixin, DeleteView):
+class CategoryDeleteView(LoginRequiredMixin, CategoriesMixin, DeleteView):
     model = Category
+    template_name = 'category_confirm_delete.html'
     success_url = reverse_lazy('categories')
+
