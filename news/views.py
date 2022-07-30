@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django import forms
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, CreateView, DeleteView
 
@@ -19,16 +19,58 @@ def hello(request):
 # def main(request):
 #     return render(request, "blog/index.html", {"user": request.user})
 
+
+    # Отрисовка HTML-шаблона index.html с данными внутри
+    # переменной контекста context
+    # return render(
+    #     request,
+    #     'index.html',
+    #     context={'num_books':num_books,'num_instances':num_instances,'num_instances_available':num_instances_available,'num_authors':num_authors},
+    # )
+
+
+class CategoriesMixin:
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        context['category'] = Category.objects.all()
+        return context
+
+
+class IndexListView(CategoriesMixin, ListView):
+    model = News
+    template_name = 'index.html'
+    context_object_name = 'news'  # human-understandable name of variable to access from templates
+    category_id = 0  # категория по умолчанию все (0)
+
+    def get_queryset(self):
+        """
+        Dynamic filtering https://docs.djangoproject.com/en/4.0/topics/class-based-views/generic-display/
+        """
+        if not self.kwargs.get('category_id'):
+            return News.objects.all()
+        self.category_id = self.kwargs['category_id']
+        return News.objects.filter(category_id=self.category_id)
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        print('category_id', self.category_id)
+        if not self.category_id:
+            title = "Последние новости"
+        else:
+            title, = [i.name for i in context['category'] if i.id == self.category_id]
+        context['title'] = title
+        return context
+
+
 def index(request, category_id=0):
     """
-    Функция отображения для домашней страницы сайта.
+
+    :param request:
+    :param category_id:
+    :return:
     """
-    # Генерация "количеств" некоторых главных объектов
-    # num_books=Book.objects.all().count()
-    # num_instances=BookInstance.objects.all().count()
-    # # Доступные книги (статус = 'a')
-    # num_instances_available=BookInstance.objects.filter(status__exact='a').count()
-    # num_authors=Author.objects.count()  # Метод 'all()' применён по умолчанию.
 
     # form = CommentForm()
     if category_id != 0:
@@ -37,7 +79,6 @@ def index(request, category_id=0):
         news = News.objects.order_by('created_date').all()
 
     categories = Category.objects.all()
-    title = "Последние новости"
     if not category_id:
         title = "Последние новости"
     else:
@@ -56,21 +97,6 @@ def index(request, category_id=0):
                            'category': categories,
                            'title': title})
 
-    # Отрисовка HTML-шаблона index.html с данными внутри
-    # переменной контекста context
-    # return render(
-    #     request,
-    #     'index.html',
-    #     context={'num_books':num_books,'num_instances':num_instances,'num_instances_available':num_instances_available,'num_authors':num_authors},
-    # )
-
-
-class CategoriesMixin:
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
-        context = super().get_context_data(**kwargs)
-        context['category'] = Category.objects.all()
-        return context
 
 class CategoriesListView(LoginRequiredMixin, ListView):
     login_url = 'login'
