@@ -1,16 +1,17 @@
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django import forms
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.views.generic import ListView, CreateView
+from django.urls import reverse, reverse_lazy
+from django.views.generic import ListView, CreateView, DeleteView
 
 from .models import *
+
+
 # Create your views here.
 
 
 def hello(request):
-    users_type = UsersTypes.objects.all()
-    users = Users.objects.all()
 
     return HttpResponse("Hello")
 
@@ -40,7 +41,7 @@ def index(request, category_id=0):
     if not category_id:
         title = "Последние новости"
     else:
-        title,  = [i.name for i in categories if i.id == category_id]
+        title, = [i.name for i in categories if i.id == category_id]
     # if form.validate_on_submit():
     #     comment = Comments(content=form.content.data,
     #                        users_id=current_user.id,
@@ -50,11 +51,10 @@ def index(request, category_id=0):
     #     return redirect(f"/{category_id}")
     return render(request,
                   'index.html',
-                  context={'news':news,
+                  context={'news': news,
                            # 'form': form,
-                           'category':categories,
+                           'category': categories,
                            'title': title})
-
 
     # Отрисовка HTML-шаблона index.html с данными внутри
     # переменной контекста context
@@ -84,3 +84,21 @@ class CategoryCreateView(LoginRequiredMixin, CreateView):
     model = Category
     fields = ['name']
     template_name = 'category.html'
+
+    def get_success_url(self):
+        return reverse('categories')
+
+    def get_form(self, form_class=None):
+        if form_class is None:
+            form_class = self.get_form_class()
+
+        form = super(CategoryCreateView, self).get_form(form_class)
+        form.fields['name'].widget = forms.TextInput(attrs={
+            'class': 'form-control', 'type': 'form-name',
+            'placeholder': 'Enter category Name'})
+        return form
+
+
+class CategoryDeleteView(LoginRequiredMixin, DeleteView):
+    model = Category
+    success_url = reverse_lazy('categories')
