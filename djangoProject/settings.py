@@ -19,7 +19,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
 
 FIXTURE_DIRS = (
-    os.path.join(PROJECT_DIR, 'fixtures'),
+    os.path.join(BASE_DIR, 'fixtures'),
     )
 
 # Quick-start development settings - unsuitable for production
@@ -61,8 +61,7 @@ ROOT_URLCONF = 'djangoProject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -130,9 +129,12 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATICFILES_DIRS = ['static']
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'

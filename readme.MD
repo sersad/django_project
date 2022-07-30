@@ -28,5 +28,18 @@ docker-compose run web python manage.py loaddata fixtures/data
 `docker system prune -a -f`
 
 
+https://www.twilio.com/blog/passwordless-authentication-system-django-twilio-verify-sendgrid?utm_campaign=Django%2BNewsletter&utm_medium=web&utm_source=Django_Newsletter_137
+
 Руководство Django Часть 8: Аутентификация и авторизация пользователя - Изучение веб-разработки 
 https://developer.mozilla.org/ru/docs/Learn/Server-side/Django/Authentication
+
+Dockerizing Django with Postgres, Gunicorn, and Traefik
+https://testdriven.io/blog/django-docker-traefik/
+
+Изучаем Docker, часть 3: файлы Dockerfile
+https://habr.com/ru/company/ruvds/blog/439980/
+
+
+The login_required decorator
+login_required(redirect_field_name='next', login_url=None)[source]
+https://docs.djangoproject.com/en/4.0/topics/auth/default/#django.contrib.auth.decorators.login_required%23django.contrib.auth.decorators.login_required
