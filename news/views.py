@@ -3,30 +3,11 @@ from django import forms
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.views.generic import ListView, CreateView, DeleteView
+from django.views.generic import ListView, CreateView, DeleteView, TemplateView
 
 from .models import *
 
-
 # Create your views here.
-
-
-def hello(request):
-
-    return HttpResponse("Hello")
-
-
-# def main(request):
-#     return render(request, "blog/index.html", {"user": request.user})
-
-
-    # Отрисовка HTML-шаблона index.html с данными внутри
-    # переменной контекста context
-    # return render(
-    #     request,
-    #     'index.html',
-    #     context={'num_books':num_books,'num_instances':num_instances,'num_instances_available':num_instances_available,'num_authors':num_authors},
-    # )
 
 
 class CategoriesMixin:
@@ -64,38 +45,14 @@ class IndexListView(CategoriesMixin, ListView):
         return context
 
 
-def index(request, category_id=0):
-    """
+class AboutView(CategoriesMixin, TemplateView):
+    template_name = "about.html"
 
-    :param request:
-    :param category_id:
-    :return:
-    """
 
-    # form = CommentForm()
-    if category_id != 0:
-        news = News.objects.filter(category_id=category_id).order_by('created_date').all()
-    else:
-        news = News.objects.order_by('created_date').all()
+class ContactsView(CategoriesMixin, TemplateView):
+    template_name = "contacts.html"
 
-    categories = Category.objects.all()
-    if not category_id:
-        title = "Последние новости"
-    else:
-        title, = [i.name for i in categories if i.id == category_id]
-    # if form.validate_on_submit():
-    #     comment = Comments(content=form.content.data,
-    #                        users_id=current_user.id,
-    #                        news_id=int(form.news_id.data))
-    #     db_sess.add(comment)
-    #     db_sess.commit()
-    #     return redirect(f"/{category_id}")
-    return render(request,
-                  'index.html',
-                  context={'news': news,
-                           # 'form': form,
-                           'category': categories,
-                           'title': title})
+
 
 
 class CategoriesListView(LoginRequiredMixin, ListView):
@@ -137,3 +94,37 @@ class CategoryDeleteView(LoginRequiredMixin, CategoriesMixin, DeleteView):
     template_name = 'category_confirm_delete.html'
     success_url = reverse_lazy('categories')
 
+
+
+def index(request, category_id=0):
+    """
+
+    :param request:
+    :param category_id:
+    :return:
+    """
+
+    # form = CommentForm()
+    if category_id != 0:
+        news = News.objects.filter(category_id=category_id).order_by('created_date').all()
+    else:
+        news = News.objects.order_by('created_date').all()
+
+    categories = Category.objects.all()
+    if not category_id:
+        title = "Последние новости"
+    else:
+        title, = [i.name for i in categories if i.id == category_id]
+    # if form.validate_on_submit():
+    #     comment = Comments(content=form.content.data,
+    #                        users_id=current_user.id,
+    #                        news_id=int(form.news_id.data))
+    #     db_sess.add(comment)
+    #     db_sess.commit()
+    #     return redirect(f"/{category_id}")
+    return render(request,
+                  'index.html',
+                  context={'news': news,
+                           # 'form': form,
+                           'category': categories,
+                           'title': title})
