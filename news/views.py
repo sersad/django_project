@@ -3,7 +3,7 @@ from django import forms
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.views.generic import ListView, CreateView, DeleteView, TemplateView
+from django.views.generic import ListView, CreateView, DeleteView, TemplateView, UpdateView
 
 from .models import *
 
@@ -110,6 +110,45 @@ class CategoryDeleteView(LoginRequiredMixin, CategoriesMixin, DeleteView):
     template_name = 'category_confirm_delete.html'
     success_url = reverse_lazy('categories')
 
+
+class CategoryUpdateView(LoginRequiredMixin, CategoriesMixin, UpdateView):
+    """
+    Обрабатывает Обновление категории
+    """
+    model = Category
+    fields = ['name']
+    template_name = 'category.html'
+    success_url = reverse_lazy('categories')
+
+
+
+class NewsCreateView(LoginRequiredMixin, CategoriesMixin, CreateView):
+    """
+    Создание новой категории
+    TODO: еще не написано
+    """
+    model = News
+    fields = ['title']
+    template_name = 'news.html'
+
+    def get_success_url(self):
+        """
+        Если все удачно, то вернем пользователя на заглавную
+        """
+        return reverse('')
+
+    # def get_form(self, form_class=None):
+    #     """
+    #     Магия для того чтоб форма добавить атрибуты
+    #     """
+    #     if form_class is None:
+    #         form_class = self.get_form_class()
+    #
+    #     form = super(CategoryCreateView, self).get_form(form_class)
+    #     form.fields['name'].widget = forms.TextInput(attrs={
+    #         'class': 'form-control', 'type': 'form-name',
+    #         'placeholder': 'Enter category Name'})
+    #     return form
 
 
 
