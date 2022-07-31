@@ -11,6 +11,9 @@ from .models import *
 
 
 class CategoriesMixin:
+    """
+    Mixin для подгрузки категорий новостей. Используется для формирования левого меню.
+    """
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
@@ -19,6 +22,9 @@ class CategoriesMixin:
 
 
 class IndexListView(CategoriesMixin, ListView):
+    """
+    Основная страничка новостей
+    """
     model = News
     template_name = 'index.html'
     context_object_name = 'news'  # human-understandable name of variable to access from templates
@@ -34,14 +40,12 @@ class IndexListView(CategoriesMixin, ListView):
         return News.objects.filter(category_id=self.category_id)
 
     def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
-        print('category_id', self.category_id)
         if not self.category_id:
             title = "Последние новости"
         else:
             title, = [i.name for i in context['category'] if i.id == self.category_id]
-        context['title'] = title
+        context['title'] = title  # формирование заголовка
         return context
 
 
@@ -53,32 +57,41 @@ class ContactsView(CategoriesMixin, TemplateView):
     template_name = "contacts.html"
 
 
-
-
 class CategoriesListView(LoginRequiredMixin, ListView):
-    login_url = 'login'
-    redirect_field_name = 'categories'
+    """
+    Просмотр категорий новостей
+    TODO: переписать это context_object_name = 'category' на mixin CategoriesMixin и поменять шаблон
+    """
+    login_url = 'login'  # если не авторизован, то кинем на авторизацию
+    redirect_field_name = 'categories'  # при каких либо действиях редирект обратно (не уверен, что это нужно)
     model = Category
-    context_object_name = 'category'
-    template_name = 'categories.html'
+    context_object_name = 'category'  # c каким именем идет context
+    template_name = 'categories.html'  # имя шаблона
 
     def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
-        # Add in a QuerySet of all the books
         context['title'] = 'Просмотр категорий'
         return context
 
 
 class CategoryCreateView(LoginRequiredMixin, CategoriesMixin, CreateView):
+    """
+    Создание новой категории
+    """
     model = Category
     fields = ['name']
     template_name = 'category.html'
 
     def get_success_url(self):
+        """
+        Если все удачно, то вернем пользователя на categories
+        """
         return reverse('categories')
 
     def get_form(self, form_class=None):
+        """
+        Магия для того чтоб форма добавить атрибуты
+        """
         if form_class is None:
             form_class = self.get_form_class()
 
@@ -90,20 +103,20 @@ class CategoryCreateView(LoginRequiredMixin, CategoriesMixin, CreateView):
 
 
 class CategoryDeleteView(LoginRequiredMixin, CategoriesMixin, DeleteView):
+    """
+    Обрабатывает удаление категории
+    """
     model = Category
     template_name = 'category_confirm_delete.html'
     success_url = reverse_lazy('categories')
 
 
 
+
+###СТАРЬЕ но тут нужная форма которую нужно перенести в IndexListView
+
+
 def index(request, category_id=0):
-    """
-
-    :param request:
-    :param category_id:
-    :return:
-    """
-
     # form = CommentForm()
     if category_id != 0:
         news = News.objects.filter(category_id=category_id).order_by('created_date').all()
