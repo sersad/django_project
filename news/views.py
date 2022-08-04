@@ -7,6 +7,7 @@ from django.views.generic import ListView, CreateView, DeleteView, TemplateView,
 
 from .models import *
 
+
 # Create your views here.
 
 
@@ -14,6 +15,7 @@ class CategoriesMixin:
     """
     Mixin для подгрузки категорий новостей. Используется для формирования левого меню.
     """
+
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
@@ -121,7 +123,6 @@ class CategoryUpdateView(LoginRequiredMixin, CategoriesMixin, UpdateView):
     success_url = reverse_lazy('categories')
 
 
-
 class NewsCreateView(LoginRequiredMixin, CategoriesMixin, CreateView):
     """
     Создание новой категории
@@ -149,7 +150,6 @@ class NewsCreateView(LoginRequiredMixin, CategoriesMixin, CreateView):
     #         'class': 'form-control', 'type': 'form-name',
     #         'placeholder': 'Enter category Name'})
     #     return form
-
 
 
 ###СТАРЬЕ но тут нужная форма которую нужно перенести в IndexListView

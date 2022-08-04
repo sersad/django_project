@@ -14,5 +14,3 @@ urlpatterns = [
     path('category/<int:pk>', CategoryUpdateView.as_view(), name='category_update'),
     path('news', NewsCreateView.as_view(), name='news'),
 ]
-
-
