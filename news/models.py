@@ -16,6 +16,9 @@ class Users(models.Model):
     def created_date(self):
         return self.user.date_joined
 
+    def __repr__(self):
+        return f'{self.user.first_name}'
+
     def __str__(self):
         return f'{self.user.username} - {", ".join(x.name for x in  self.user.groups.all())}'
 
@@ -45,6 +48,7 @@ class News(models.Model):
 class Comments(models.Model):
     class Meta:
         unique_together = ['users_id', 'news_id', 'content']
+        ordering = ['created_date']
     users_id = models.ForeignKey(User, on_delete=models.CASCADE)
     news_id = models.ForeignKey(News, on_delete=models.CASCADE)
     content = models.TextField(max_length=512)

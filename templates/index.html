@@ -53,6 +53,7 @@
                         Автор: <span class="badge badge-pill badge-light">{{ item.user_id }}</span>,
                         Дата написания: <span class="badge badge-pill badge-light">{{ item.created_date }}</span>
                     </figcaption>
+
                     <!-- конопочки только админам  -->
 
                     <!-- кнопка показа комментариев -->
@@ -116,6 +117,8 @@
                 <!-- Большое модальное окно для добавления комментариев -->
                 {% if request.user.is_authenticated %}
                     COMMENT
+<br>
+{{ item.category_id }}
                     <div class="modal fade" id="exampleModal{{ item.id }}" tabindex="-1" role="dialog"
                          aria-labelledby="exampleModalLabel" aria-hidden="false">
                         <div class="modal-dialog" role="document">
