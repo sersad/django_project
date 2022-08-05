@@ -123,13 +123,24 @@ class CategoryUpdateView(LoginRequiredMixin, CategoriesMixin, UpdateView):
     success_url = reverse_lazy('categories')
 
 
+class NewsUpdateView(LoginRequiredMixin, CategoriesMixin, UpdateView):
+    """
+    Создание новой категории
+    TODO: еще не написано
+    """
+    model = News
+    fields = ['title', 'content', 'is_published', 'category_id']
+    template_name = 'news.html'
+    success_url = reverse_lazy('')
+
+
 class NewsCreateView(LoginRequiredMixin, CategoriesMixin, CreateView):
     """
     Создание новой категории
     TODO: еще не написано
     """
     model = News
-    fields = ['title']
+    fields = ['title', 'content', 'is_published', 'category_id']
     template_name = 'news.html'
 
     def get_success_url(self):

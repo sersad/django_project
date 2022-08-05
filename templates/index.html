@@ -1,5 +1,14 @@
 {% extends "base.html" %}
+
+<!-- определяем админа -->
 {% load custom_template_tags %}
+
+{% for group in request.user.groups.all %}
+    {% if group.name == "Editor" %}
+        {% setvar true as admin %}
+    {% endif %}
+{% endfor %}
+<!-- определяем админа -->
 
 {% block body %}
     <body class="hold-transition sidebar-mini">
@@ -9,12 +18,6 @@
 {% block content %}
 
 
-    <!-- определяем админа -->
-    {% for group in request.user.groups.all %}
-        {% if group.name == "Editor" %}
-            {% setvar true as admin %}
-        {% endif %}
-    {% endfor %}
 
     <!-- перебор новостей -->
     {% for item in news %}
@@ -50,18 +53,18 @@
                 <div class="card-footer">
 
                     <figcaption class="blockquote-footer text-end">
-                        Автор: <span class="badge badge-pill badge-light">{{ item.user_id }}</span>,
+                        Автор: <span class="badge badge-pill badge-light">{{ item.user_id.first_name }}</span>,
                         Дата написания: <span class="badge badge-pill badge-light">{{ item.created_date }}</span>
                     </figcaption>
 
                     <!-- конопочки только админам  -->
 
                     <!-- кнопка показа комментариев -->
-                    {% if item.comments|length > 0 %}
+                    {% if item.comments.all|length > 0 %}
                         <button class="btn btn-outline-secondary btn-sm" type="button" data-toggle="collapse"
                                 data-target="#collapse{{ item.id }}" aria-expanded="false"
                                 aria-controls="collapse{{ item.id }}">
-                            Комментарии <span class="badge badge-light">{{ item.comments|length }}</span>
+                            Комментарии <span class="badge badge-light">{{ item.comments.all|length }}</span>
                         </button>
                     {% endif %}
 
@@ -88,13 +91,13 @@
                     <div class="collapse" id="collapse{{ item.id }}">
                         <div class="card-footer">
                             <div class="card-body">
-                                {% for x in item.comments %}
+                                {% for x in item.comments.all %}
                                     <div class="col-md4 border rounded">
                                         <div class="align-left">
                                             <p class="blockquote-footer text-end bd-highlight">
                                                 <span class="badge badge-pill badge-light">{{ x.created_date }}</span>
                                                 Автор: <span
-                                                    class="badge badge-pill badge-light">{{ x.user.name }}</span>
+                                                    class="badge badge-pill badge-light">{{ x.users_id.first_name }}</span>
                                             </p>
                                         </div>
 
@@ -116,9 +119,6 @@
 
                 <!-- Большое модальное окно для добавления комментариев -->
                 {% if request.user.is_authenticated %}
-                    COMMENT
-<br>
-{{ item.category_id }}
                     <div class="modal fade" id="exampleModal{{ item.id }}" tabindex="-1" role="dialog"
                          aria-labelledby="exampleModalLabel" aria-hidden="false">
                         <div class="modal-dialog" role="document">

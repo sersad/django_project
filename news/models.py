@@ -46,10 +46,17 @@ class News(models.Model):
 
 
 class Comments(models.Model):
+    """https://docs.djangoproject.com/en/4.0/ref/models/fields/#django.db.models.ForeignKey.related_name"""
     class Meta:
         unique_together = ['users_id', 'news_id', 'content']
         ordering = ['created_date']
-    users_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    news_id = models.ForeignKey(News, on_delete=models.CASCADE)
+    users_id = models.ForeignKey(User, on_delete=models.CASCADE,
+                                 related_name="comments",
+                                 related_query_name="comments",
+                                 )
+    news_id = models.ForeignKey(News, on_delete=models.CASCADE,
+                                related_name="comments",
+                                related_query_name="comments",
+    )
     content = models.TextField(max_length=512)
     created_date = models.DateTimeField(default=datetime.now)
