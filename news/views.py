@@ -38,9 +38,7 @@ class IndexListView(CategoriesMixin, ListView, FormView):
     template_name = 'index.html'
     context_object_name = 'news'  # human-understandable name of variable to access from templates
     category_id = 0  # категория по умолчанию все (0)
-
     form_class = CommentsForm
-
     success_url = reverse_lazy('index')
 
     def get_queryset(self):
@@ -104,7 +102,9 @@ class AboutView(CategoriesMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'О проекте'
+
         return context
+
 
 class ContactsView(CategoriesMixin, TemplateView):
     template_name = "contacts.html"
@@ -113,7 +113,6 @@ class ContactsView(CategoriesMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Контакты'
         return context
-
 
 
 class CategoriesListView(LoginRequiredMixin, CategoriesMixin, ListView):
@@ -268,6 +267,7 @@ class UserUpdateView(LoginRequiredMixin, CategoriesMixin, UpdateView):
         context['title'] = 'Обновление пользователя'
         return context
 
+
 class UserDeleteView(LoginRequiredMixin, CategoriesMixin, DeleteView):
     """
     Обрабатывает удаление пользователя
@@ -279,7 +279,7 @@ class UserDeleteView(LoginRequiredMixin, CategoriesMixin, DeleteView):
 
 def register_request(request):
     """
-    TODO: в ClassView бы переписать, но у меня лапки
+    TODO: в ClassView бы переписать, но времени нет
     :param request:
     :return:
     """

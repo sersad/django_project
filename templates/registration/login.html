@@ -22,14 +22,13 @@
                             please login with an account that has access.
                         </div>
                     {% else %}
-                        <
                         <div class="alert alert-danger">>Please login to see this page.</div>
                     {% endif %}
                 {% endif %}
 
 
                 {% if form.errors %}
-                    <div class="alert alert-danger">Your username and password didn't match. Please try again.</div>
+                    <div class="alert alert-danger">{{ form.errors }}</div>
                 {% endif %}
 
 
