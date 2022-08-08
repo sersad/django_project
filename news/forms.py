@@ -1,9 +1,11 @@
-from django.forms import ModelForm
+from django import forms
 from news.models import Comments
 
 
 # Create the form class.
-class CommentsForm(ModelForm):
+class CommentsForm(forms.ModelForm):
+
     class Meta:
         model = Comments
-        fields = ['content']
+        fields = ['content', 'news_id', 'users_id']
+

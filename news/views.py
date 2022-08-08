@@ -1,9 +1,10 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django import forms
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, CreateView, DeleteView, TemplateView, UpdateView
+from django.views.generic.edit import FormMixin
 
 from .forms import CommentsForm
 from .models import *
@@ -24,7 +25,7 @@ class CategoriesMixin:
         return context
 
 
-class IndexListView(CategoriesMixin, ListView, CreateView):
+class IndexListView(CategoriesMixin, ListView, FormMixin):
     """
     Основная страничка новостей
     """
@@ -32,6 +33,10 @@ class IndexListView(CategoriesMixin, ListView, CreateView):
     template_name = 'index.html'
     context_object_name = 'news'  # human-understandable name of variable to access from templates
     category_id = 0  # категория по умолчанию все (0)
+
+    form_class = CommentsForm
+
+    success_url = reverse_lazy('')
 
     def get_queryset(self):
         """
@@ -49,7 +54,8 @@ class IndexListView(CategoriesMixin, ListView, CreateView):
         else:
             title, = [i.name for i in context['category'] if i.id == self.category_id]
         context['title'] = title  # формирование заголовка
-        context['form'] = CommentsForm()
+        # context['form'] = CommentsForm()
+        context['form'] = self.get_form()
         return context
 
     def get_form(self, form_class=None):
@@ -60,10 +66,22 @@ class IndexListView(CategoriesMixin, ListView, CreateView):
             form_class = self.get_form_class()
 
         form = super(IndexListView, self).get_form(form_class)
-        form.fields['content'].widget = forms.TextInput(attrs={
-            'class': 'form-control', 'type': 'form-name',
-            'placeholder': 'Enter category Name'})
+        form.fields['content'].widget = forms.Textarea(attrs={
+            'class': 'form-control',
+            'type': 'form-content',
+            'placeholder': 'Enter comment'
+        })
         return form
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            # <process form cleaned data>
+            # print(form.cleaned_data)
+            form.save()
+            return HttpResponseRedirect(reverse('index'))
+        # print('form invalid', form.cleaned_data)
+        return self.get(request)
 
 
 class AboutView(CategoriesMixin, TemplateView):
