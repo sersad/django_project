@@ -1,14 +1,5 @@
 {% extends "base.html" %}
 
-<!-- определяем админа -->
-{% load custom_template_tags %}
-
-{% for group in request.user.groups.all %}
-  {% if group.name == "Editor" %}
-    {% setvar true as admin %}
-  {% endif %}
-{% endfor %}
-<!-- определяем админа -->
 
 {% block body %}
   <body class="hold-transition sidebar-mini">
@@ -17,12 +8,10 @@
 
 {% block content %}
 
-
-
   <!-- перебор новостей -->
   {% for item in news %}
     <!-- если опубликована, админ видит все -->
-    {% if item.is_published or admin == true %}
+    {% if item.is_published or is_admin %}
 
       <!-- Default box -->
 
@@ -53,11 +42,11 @@
         <div class="card-footer">
 
           <figcaption class="blockquote-footer text-end">
-            Автор: <span class="badge badge-pill badge-light">{{ item.user_id.first_name }}</span>,
+            Автор: <span
+                  class="badge badge-pill badge-light">{{ item.user.first_name }} {{ item.users.last_name }}</span>,
             Дата написания: <span class="badge badge-pill badge-light">{{ item.created_date }}</span>
           </figcaption>
 
-          <!-- конопочки только админам  -->
 
           <!-- кнопка показа комментариев -->
           {% if item.comments.all|length > 0 %}
@@ -76,7 +65,7 @@
           {% endif %}
 
           <!-- конопочки только админам  -->
-          {% if admin == true %}
+          {% if is_admin %}
             <a href="../news/{{ item.id }}" class="btn btn-outline-warning btn-sm">
               Изменить
             </a>
@@ -97,7 +86,7 @@
                       <p class="blockquote-footer text-end bd-highlight">
                         <span class="badge badge-pill badge-light">{{ x.created_date }}</span>
                         Автор: <span
-                              class="badge badge-pill badge-light">{{ x.users_id.first_name }}</span>
+                              class="badge badge-pill badge-light">{{ x.users.first_name }} {{ x.users.last_name }}</span>
                       </p>
                     </div>
 
@@ -154,8 +143,8 @@
 
                   <!--это передается id новости и пользователя -->
                   <div class="modal fade" aria-hidden="true">
-                    <input type="hidden" name="news_id" value={{ item.id }}>
-                    <input type="hidden" name="users_id" value={{ request.user.id }}>
+                    <input type="hidden" name="news" value={{ item.id }}>
+                    <input type="hidden" name="users" value={{ request.user.id }}>
                   </div>
                 </form>
 

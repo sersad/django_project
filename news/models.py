@@ -33,6 +33,7 @@ class Category(models.Model):
 class News(models.Model):
     class Meta:
         unique_together = ['title', 'category']
+        ordering = ['-created_date']
     user = models.ForeignKey(User,
                                 on_delete=models.CASCADE,
                                 null=False)
@@ -58,11 +59,11 @@ class Comments(models.Model):
     class Meta:
         unique_together = ['users_id', 'news_id', 'content']
         ordering = ['created_date']
-    users_id = models.ForeignKey(User, on_delete=models.CASCADE,
+    users = models.ForeignKey(User, on_delete=models.CASCADE,
                                  related_name="comments",
                                  related_query_name="comments",
                                  )
-    news_id = models.ForeignKey(News, on_delete=models.CASCADE,
+    news = models.ForeignKey(News, on_delete=models.CASCADE,
                                 related_name="comments",
                                 related_query_name="comments",
     )

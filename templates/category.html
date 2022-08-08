@@ -1,14 +1,5 @@
 {% extends "base.html" %}
 
-<!-- определяем админа -->
-{% load custom_template_tags %}
-
-{% for group in request.user.groups.all %}
-    {% if group.name == "Editor" %}
-        {% setvar true as admin %}
-    {% endif %}
-{% endfor %}
-<!-- определяем админа -->
 
 {% block body %}
     <body class="hold-transition sidebar-mini">
@@ -16,7 +7,7 @@
 
 {% block content %}
 
-    {% if admin == true %}
+    {% if is_admin %}
         <!-- general form elements -->
         <div class="card card-primary">
 

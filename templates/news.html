@@ -1,15 +1,5 @@
 {% extends "base.html" %}
 
-<!-- определяем админа -->
-{% load custom_template_tags %}
-
-{% for group in request.user.groups.all %}
-  {% if group.name == "Editor" %}
-    {% setvar true as admin %}
-  {% endif %}
-{% endfor %}
-<!-- определяем админа -->
-
 {% block body %}
   {% load static %}
   <body class="hold-transition sidebar-mini">
@@ -27,7 +17,7 @@
 {% block content %}
 
 
-  {% if request.user.is_authenticated and admin == true %}
+  {% if request.user.is_authenticated and is_admin %}
 
     <!-- general form elements -->
     <div class="card card-primary">
@@ -38,10 +28,9 @@
       <form class="form-horizontal" method="post" action="">
         {% csrf_token %}
 
-{#        {% if forms.errors %}#}
-{#          <div class="alert alert-danger">{{ form.non_field_errors }}</div>#}
-      <div>{{ form.non_field_errors }}</div>
-{#        {% endif %}#}
+        {% if form.errors %}
+          <div class="alert alert-danger">{{ form.errors }}</div>
+        {% endif %}
 
         <div class="card-body">
           <div class="form-group">
@@ -61,7 +50,7 @@
             <label for='summernote'>
               {{ form.content.label }}
             </label>
-            <textarea id="summernote" name="content" class='form-control' >
+            <textarea id="summernote" name="content" class='form-control'>
           {{ form.content.value }}
         </textarea>
             <script>

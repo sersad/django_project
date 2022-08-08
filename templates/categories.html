@@ -14,10 +14,10 @@
   </div>
 </div>
 
-<!-- админ видит все -->
-{% for group in request.user.groups.all %}
-{% if group.name == 'Editor' %}
 
+{#{% for group in request.user.groups.all %}#}
+{#{% if group.name == 'Editor' %}#}
+{% if is_admin %}
 <div class="container-fluid">
   <div class="row">
     <div class="col">
@@ -63,7 +63,7 @@
 
 <!-- end админ видит все -->
 {% endif %}
-{% endfor %}
+{#{% endfor %}#}
 
 <a href="../category" class="btn btn-outline-success btn-sm">Добавить категорию</a>
 <a href="../" class="btn btn-outline-info btn-sm">Закрыть</a>

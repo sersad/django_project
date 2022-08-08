@@ -1,20 +1,17 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 
-from news.models import Comments, News, Category
+from news.models import Comments, News
 
 
-# Create the form class.
 class CommentsForm(forms.ModelForm):
-
     class Meta:
         model = Comments
-        fields = ['content', 'news_id', 'users_id']
+        fields = ['content', 'news', 'users']
 
 
-# Create the form class.
 class NewsForm(forms.ModelForm):
-    # category = forms.ModelChoiceField(queryset=Category.objects.all())
-
     class Meta:
         model = News
         fields = ['category', 'title', 'content', 'is_published']
@@ -28,3 +25,25 @@ class NewsForm(forms.ModelForm):
                 'rows': 50,
                 'placeholder': 'Enter News here'}),
         }
+
+
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'username', 'email', 'groups']
+
+
+class NewUserForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')
+
+    def save(self, commit=True):
+        user = super(NewUserForm, self).save(commit=False)
+        user.email = self.cleaned_data['email']
+
+        if commit:
+            user.save()
+        return user

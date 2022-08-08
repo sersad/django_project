@@ -1,12 +1,14 @@
+from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django import forms
+from django.contrib import messages
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, CreateView, DeleteView, TemplateView, UpdateView, FormView
 from django.views.generic.edit import FormMixin, ModelFormMixin
 
-from .forms import CommentsForm, NewsForm
+from .forms import CommentsForm, NewsForm, UserForm, NewUserForm
 from .models import *
 
 
@@ -22,6 +24,8 @@ class CategoriesMixin:
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         context['category'] = Category.objects.all()
+        # определяем редактора
+        context['is_admin'] = self.request.user.groups.filter(name='Editor').exists()
         return context
 
 
@@ -54,7 +58,6 @@ class IndexListView(CategoriesMixin, ListView, FormView):
         else:
             title, = [i.name for i in context['category'] if i.id == self.category_id]
         context['title'] = title  # формирование заголовка
-        # context['form'] = CommentsForm()
         context['form'] = self.get_form()
         return context
 
@@ -82,6 +85,7 @@ class IndexListView(CategoriesMixin, ListView, FormView):
         form.instance.save()
         return super().form_valid(form)
 
+    # можно или form_valid или как ниже для примера, оставлено на память
     # def post(self, request, *args, **kwargs):
     #     form = self.form_class(request.POST)
     #     if form.is_valid():
@@ -101,10 +105,9 @@ class ContactsView(CategoriesMixin, TemplateView):
     template_name = "contacts.html"
 
 
-class CategoriesListView(LoginRequiredMixin, ListView):
+class CategoriesListView(LoginRequiredMixin, CategoriesMixin, ListView):
     """
     Просмотр категорий новостей
-    TODO: переписать это context_object_name = 'category' на mixin CategoriesMixin и поменять шаблон
     """
     login_url = 'login'  # если не авторизован, то кинем на авторизацию
     redirect_field_name = 'categories'  # при каких либо действиях редирект обратно (не уверен, что это нужно)
@@ -219,33 +222,42 @@ class NewsDeleteView(LoginRequiredMixin, CategoriesMixin, DeleteView):
     success_url = reverse_lazy('index')
 
 
+class UsersListView(LoginRequiredMixin, CategoriesMixin, ListView):
+    """
+    Просмотр пользователей
+    TODO: переписать это context_object_name = 'category' на mixin CategoriesMixin и поменять шаблон
+    """
+    login_url = 'login'  # если не авторизован, то кинем на авторизацию
+    redirect_field_name = 'users'  # при каких либо действиях редирект обратно (не уверен, что это нужно)
+    model = User
+    context_object_name = 'users'  # c каким именем идет context
+    template_name = 'users.html'  # имя шаблона
 
 
-###СТАРЬЕ но тут нужная форма которую нужно перенести в IndexListView
+class UserUpdateView(LoginRequiredMixin, CategoriesMixin, UpdateView):
+    model = User
+    form_class = UserForm
+    template_name = 'user.html'
+    success_url = reverse_lazy('users')
 
 
-def index(request, category_id=0):
-    # form = CommentForm()
-    if category_id != 0:
-        news = News.objects.filter(category_id=category_id).order_by('created_date').all()
-    else:
-        news = News.objects.order_by('created_date').all()
+class UsersDeleteView(LoginRequiredMixin, CategoriesMixin, DeleteView):
+    """
+    Обрабатывает удаление пользователя
+    """
+    model = Users
+    template_name = 'confirm_delete.html'
+    success_url = reverse_lazy('users')
 
-    categories = Category.objects.all()
-    if not category_id:
-        title = "Последние новости"
-    else:
-        title, = [i.name for i in categories if i.id == category_id]
-    # if form.validate_on_submit():
-    #     comment = Comments(content=form.content.data,
-    #                        users_id=current_user.id,
-    #                        news_id=int(form.news_id.data))
-    #     db_sess.add(comment)
-    #     db_sess.commit()
-    #     return redirect(f"/{category_id}")
-    return render(request,
-                  'index.html',
-                  context={'news': news,
-                           # 'form': form,
-                           'category': categories,
-                           'title': title})
+
+def register_request(request):
+    if request.method == "POST":
+        form = NewUserForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, "Registration successful.")
+            return redirect("index")
+        messages.error(request, "Unsuccessful registration. Invalid information.")
+    form = NewUserForm()
+    return render(request=request, template_name="registration/register.html", context={"register_form": form})

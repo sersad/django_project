@@ -1,9 +1,11 @@
 from django.urls import path
 from .views import *
 
+
 urlpatterns = [
     # path('<int:category_id>', index, name='index'),
     # path('', index, name='index'),
+    path('register', register_request, name='register'),
     path('<int:category_id>', IndexListView.as_view(), name='index_category'),
     path('', IndexListView.as_view(), name='index'),
     path('about', AboutView.as_view(), name='about'),
@@ -15,4 +17,9 @@ urlpatterns = [
     path('news', NewsCreateView.as_view(), name='news'),
     path('news/<int:pk>', NewsUpdateView.as_view(), name='news_update'),
     path('news_delete/<int:pk>', NewsDeleteView.as_view(), name='news_delete'),
+    path('users', UsersListView.as_view(), name='users'),
+    path('users_delete/<int:pk>', UsersDeleteView.as_view(), name='users_delete'),
+    path('user/<int:pk>', UserUpdateView.as_view(), name='users_update'),
+
+
 ]

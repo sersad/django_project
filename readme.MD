@@ -31,9 +31,9 @@
 - Docker и docker compose
 
 #### Учетные данные
-- root:123 админка джанго может только комментировать
+- root:123 админка django может только комментировать
 - editor:123 может редактировать и добавлять новости
-- reader:123 может только комметрировать
+- reader:123 может только комментировать
 
 #### Запуск команды migrate в контейнере
 
@@ -69,3 +69,6 @@ https://habr.com/ru/company/ruvds/blog/439980/
 
 The login_required decorator login_required(redirect_field_name='next', login_url=None)[source]
 https://docs.djangoproject.com/en/4.0/topics/auth/default/#django.contrib.auth.decorators.login_required%23django.contrib.auth.decorators.login_required
+
+
+https://ordinarycoders.com/blog/article/django-password-reset
