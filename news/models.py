@@ -32,12 +32,20 @@ class Category(models.Model):
 
 class News(models.Model):
     class Meta:
-        unique_together = ['title', 'category_id']
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
+        unique_together = ['title', 'category']
+    user = models.ForeignKey(User,
+                                on_delete=models.CASCADE,
+                                null=False)
+    category = models.ForeignKey(Category,
+                                    on_delete=models.CASCADE,
+                                    null=False,
+                                    blank=False)
     title = models.CharField(max_length=256,
-                             unique=True)
-    content = models.TextField()
+                             unique=True,
+                             null=False,
+                             blank=False)
+    content = models.TextField(null=False,
+                               blank=False)
     created_date = models.DateTimeField(default=datetime.now)
     is_published = models.BooleanField(default=True)
 

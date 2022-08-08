@@ -3,10 +3,10 @@ from django import forms
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.views.generic import ListView, CreateView, DeleteView, TemplateView, UpdateView
-from django.views.generic.edit import FormMixin
+from django.views.generic import ListView, CreateView, DeleteView, TemplateView, UpdateView, FormView
+from django.views.generic.edit import FormMixin, ModelFormMixin
 
-from .forms import CommentsForm
+from .forms import CommentsForm, NewsForm
 from .models import *
 
 
@@ -25,7 +25,7 @@ class CategoriesMixin:
         return context
 
 
-class IndexListView(CategoriesMixin, ListView, FormMixin):
+class IndexListView(CategoriesMixin, ListView, FormView):
     """
     Основная страничка новостей
     """
@@ -35,6 +35,8 @@ class IndexListView(CategoriesMixin, ListView, FormMixin):
     category_id = 0  # категория по умолчанию все (0)
 
     form_class = CommentsForm
+
+    success_url = reverse_lazy('index')
 
     def get_queryset(self):
         """
@@ -71,15 +73,24 @@ class IndexListView(CategoriesMixin, ListView, FormMixin):
         })
         return form
 
-    def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            # <process form cleaned data>
-            # print(form.cleaned_data)
-            form.save()
-            return HttpResponseRedirect(reverse('index'))
-        # print('form invalid', form.cleaned_data)
-        return self.get(request)
+    def form_valid(self, form):
+        """
+        замена post(self, request, *args, **kwargs)
+        :param form:
+        :return:
+        """
+        form.instance.save()
+        return super().form_valid(form)
+
+    # def post(self, request, *args, **kwargs):
+    #     form = self.form_class(request.POST)
+    #     if form.is_valid():
+    #         # <process form cleaned data>
+    #         # print(form.cleaned_data)
+    #         form.save()
+    #         return HttpResponseRedirect(reverse('index'))
+    #     # print('form invalid', form.cleaned_data)
+    #     return self.get(request)
 
 
 class AboutView(CategoriesMixin, TemplateView):
@@ -141,7 +152,7 @@ class CategoryDeleteView(LoginRequiredMixin, CategoriesMixin, DeleteView):
     TODO: Generic Destroy API View generics.DestroyAPIView
     """
     model = Category
-    template_name = 'category_confirm_delete.html'
+    template_name = 'confirm_delete.html'
     success_url = reverse_lazy('categories')
 
 
@@ -166,38 +177,48 @@ class NewsUpdateView(LoginRequiredMixin, CategoriesMixin, UpdateView):
     TODO: еще не написано
     """
     model = News
-    fields = ['title', 'content', 'is_published', 'category_id']
+    form_class = NewsForm
     template_name = 'news.html'
-    success_url = reverse_lazy('')
+    success_url = reverse_lazy('index')
 
 
 class NewsCreateView(LoginRequiredMixin, CategoriesMixin, CreateView):
     """
-    Создание новой категории
-    TODO: еще не написано
+    Создание новостей
     """
     model = News
-    fields = ['title', 'content', 'is_published', 'category_id']
     template_name = 'news.html'
+    form_class = NewsForm
+    success_url = reverse_lazy('index')
 
-    def get_success_url(self):
-        """
-        Если все удачно, то вернем пользователя на заглавную
-        """
-        return reverse('')
+    def form_invalid(self, form):
+        print(form.errors)
 
-    # def get_form(self, form_class=None):
-    #     """
-    #     Магия для того чтоб форма добавить атрибуты
-    #     """
-    #     if form_class is None:
-    #         form_class = self.get_form_class()
-    #
-    #     form = super(CategoryCreateView, self).get_form(form_class)
-    #     form.fields['name'].widget = forms.TextInput(attrs={
-    #         'class': 'form-control', 'type': 'form-name',
-    #         'placeholder': 'Enter category Name'})
-    #     return form
+    # def post(self, request, *args, **kwargs):
+    #     request.POST = request.POST.copy()
+    #     request.POST['user_id'] = request.user.id
+    #     return super().post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        """
+        замена post(self, request, *args, **kwargs)
+        :param form:
+        :return:
+        """
+        form.instance.user = self.request.user
+        # form.instance.save()
+        return super().form_valid(form)
+
+
+class NewsDeleteView(LoginRequiredMixin, CategoriesMixin, DeleteView):
+    """
+    Удаление новости
+    """
+    model = News
+    template_name = 'confirm_delete.html'
+    success_url = reverse_lazy('index')
+
+
 
 
 ###СТАРЬЕ но тут нужная форма которую нужно перенести в IndexListView
