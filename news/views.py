@@ -5,6 +5,7 @@ from django.shortcuts import render, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, CreateView, DeleteView, TemplateView, UpdateView
 
+from .forms import CommentsForm
 from .models import *
 
 
@@ -23,7 +24,7 @@ class CategoriesMixin:
         return context
 
 
-class IndexListView(CategoriesMixin, ListView):
+class IndexListView(CategoriesMixin, ListView, CreateView):
     """
     Основная страничка новостей
     """
@@ -48,7 +49,21 @@ class IndexListView(CategoriesMixin, ListView):
         else:
             title, = [i.name for i in context['category'] if i.id == self.category_id]
         context['title'] = title  # формирование заголовка
+        context['form'] = CommentsForm()
         return context
+
+    def get_form(self, form_class=None):
+        """
+        Магия для того чтоб форма добавить атрибуты
+        """
+        if form_class is None:
+            form_class = self.get_form_class()
+
+        form = super(IndexListView, self).get_form(form_class)
+        form.fields['content'].widget = forms.TextInput(attrs={
+            'class': 'form-control', 'type': 'form-name',
+            'placeholder': 'Enter category Name'})
+        return form
 
 
 class AboutView(CategoriesMixin, TemplateView):
@@ -107,6 +122,7 @@ class CategoryCreateView(LoginRequiredMixin, CategoriesMixin, CreateView):
 class CategoryDeleteView(LoginRequiredMixin, CategoriesMixin, DeleteView):
     """
     Обрабатывает удаление категории
+    TODO: Generic Destroy API View generics.DestroyAPIView
     """
     model = Category
     template_name = 'category_confirm_delete.html'
@@ -121,6 +137,11 @@ class CategoryUpdateView(LoginRequiredMixin, CategoriesMixin, UpdateView):
     fields = ['name']
     template_name = 'category.html'
     success_url = reverse_lazy('categories')
+
+    # можно в миксин для определения типа пользователя CategoriesMixin
+    # def post(self, request, *args, **kwargs):
+    #     self.object = self.get_object()
+    #     return super().post(request, *args, **kwargs)
 
 
 class NewsUpdateView(LoginRequiredMixin, CategoriesMixin, UpdateView):

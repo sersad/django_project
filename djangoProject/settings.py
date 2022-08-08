@@ -88,7 +88,8 @@ DATABASES = {
         'NAME': 'myproject',
         'USER': 'user',
         'PASSWORD': 'password',
-        'HOST': 'mypg',
+        # 'HOST': 'mypg',
+        'HOST': '127.0.0.1',
         'PORT': '5432',
 
     }
