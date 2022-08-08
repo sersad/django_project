@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 
 from news.models import Comments, News
 
@@ -43,7 +43,8 @@ class NewUserForm(UserCreationForm):
     def save(self, commit=True):
         user = super(NewUserForm, self).save(commit=False)
         user.email = self.cleaned_data['email']
-
+        group = Group.objects.get(name='Reader')
         if commit:
             user.save()
+            user.groups.add(group)
         return user

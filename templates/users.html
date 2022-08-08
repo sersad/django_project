@@ -9,12 +9,7 @@
 
   <div class="card">
     <div class="card-body">
-
-      <p>При удалении пользователя, все написанные им комментарии так же будут удалены.</p>
-      <p>Удалить самого себя невозможно.</p>
-      <p>Удалить всех админов невозможно.</p>
-      <p>Админ не может себя понизить в роли.</p>
-
+      <p>При удалении пользователя, все написанные им комментарии и новости так же будут удалены.</p>
     </div>
   </div>
 
@@ -55,10 +50,12 @@
                         <a href="../user/{{ item.id }}" class="btn btn-outline-warning btn-sm">
                           Изменить
                         </a>
-                        <a href="../user_delete/{{ item.id }}" class="btn btn-outline-danger btn-sm"
-                           title="удаление пользователя удалит его комментарии">
-                          Удалить
-                        </a>
+                        {% if item.groups.all.first|lower != "editor" %}
+                          <a href="../user_delete/{{ item.id }}" class="btn btn-outline-danger btn-sm"
+                             title="удаление пользователя удалит его комментарии">
+                            Удалить
+                          </a>
+                        {% endif %}
                       </td>
                     </tr>
                     <!-- end перебор пользователей -->

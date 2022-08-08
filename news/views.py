@@ -26,6 +26,7 @@ class CategoriesMixin:
         context['category'] = Category.objects.all()
         # определяем редактора
         context['is_admin'] = self.request.user.groups.filter(name='Editor').exists()
+        context['title'] = ''
         return context
 
 
@@ -100,9 +101,19 @@ class IndexListView(CategoriesMixin, ListView, FormView):
 class AboutView(CategoriesMixin, TemplateView):
     template_name = "about.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'О проекте'
+        return context
 
 class ContactsView(CategoriesMixin, TemplateView):
     template_name = "contacts.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Контакты'
+        return context
+
 
 
 class CategoriesListView(LoginRequiredMixin, CategoriesMixin, ListView):
@@ -148,6 +159,11 @@ class CategoryCreateView(LoginRequiredMixin, CategoriesMixin, CreateView):
             'placeholder': 'Enter category Name'})
         return form
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Создание новой категории'
+        return context
+
 
 class CategoryDeleteView(LoginRequiredMixin, CategoriesMixin, DeleteView):
     """
@@ -160,29 +176,27 @@ class CategoryDeleteView(LoginRequiredMixin, CategoriesMixin, DeleteView):
 
 
 class CategoryUpdateView(LoginRequiredMixin, CategoriesMixin, UpdateView):
-    """
-    Обрабатывает Обновление категории
-    """
     model = Category
     fields = ['name']
     template_name = 'category.html'
     success_url = reverse_lazy('categories')
 
-    # можно в миксин для определения типа пользователя CategoriesMixin
-    # def post(self, request, *args, **kwargs):
-    #     self.object = self.get_object()
-    #     return super().post(request, *args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Обновление категории'
+        return context
 
 
 class NewsUpdateView(LoginRequiredMixin, CategoriesMixin, UpdateView):
-    """
-    Создание новой категории
-    TODO: еще не написано
-    """
     model = News
     form_class = NewsForm
     template_name = 'news.html'
     success_url = reverse_lazy('index')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Изменение новости'
+        return context
 
 
 class NewsCreateView(LoginRequiredMixin, CategoriesMixin, CreateView):
@@ -194,8 +208,8 @@ class NewsCreateView(LoginRequiredMixin, CategoriesMixin, CreateView):
     form_class = NewsForm
     success_url = reverse_lazy('index')
 
-    def form_invalid(self, form):
-        print(form.errors)
+    # def form_invalid(self, form):
+    #     print(form.errors)
 
     # def post(self, request, *args, **kwargs):
     #     request.POST = request.POST.copy()
@@ -212,6 +226,11 @@ class NewsCreateView(LoginRequiredMixin, CategoriesMixin, CreateView):
         # form.instance.save()
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Создание новости'
+        return context
+
 
 class NewsDeleteView(LoginRequiredMixin, CategoriesMixin, DeleteView):
     """
@@ -225,13 +244,17 @@ class NewsDeleteView(LoginRequiredMixin, CategoriesMixin, DeleteView):
 class UsersListView(LoginRequiredMixin, CategoriesMixin, ListView):
     """
     Просмотр пользователей
-    TODO: переписать это context_object_name = 'category' на mixin CategoriesMixin и поменять шаблон
     """
     login_url = 'login'  # если не авторизован, то кинем на авторизацию
     redirect_field_name = 'users'  # при каких либо действиях редирект обратно (не уверен, что это нужно)
     model = User
     context_object_name = 'users'  # c каким именем идет context
     template_name = 'users.html'  # имя шаблона
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Просмотр пользователей'
+        return context
 
 
 class UserUpdateView(LoginRequiredMixin, CategoriesMixin, UpdateView):
@@ -240,17 +263,26 @@ class UserUpdateView(LoginRequiredMixin, CategoriesMixin, UpdateView):
     template_name = 'user.html'
     success_url = reverse_lazy('users')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Обновление пользователя'
+        return context
 
-class UsersDeleteView(LoginRequiredMixin, CategoriesMixin, DeleteView):
+class UserDeleteView(LoginRequiredMixin, CategoriesMixin, DeleteView):
     """
     Обрабатывает удаление пользователя
     """
-    model = Users
+    model = User
     template_name = 'confirm_delete.html'
     success_url = reverse_lazy('users')
 
 
 def register_request(request):
+    """
+    TODO: в ClassView бы переписать, но у меня лапки
+    :param request:
+    :return:
+    """
     if request.method == "POST":
         form = NewUserForm(request.POST)
         if form.is_valid():
