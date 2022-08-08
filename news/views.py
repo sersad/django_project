@@ -36,8 +36,6 @@ class IndexListView(CategoriesMixin, ListView, FormMixin):
 
     form_class = CommentsForm
 
-    success_url = reverse_lazy('')
-
     def get_queryset(self):
         """
         Dynamic filtering https://docs.djangoproject.com/en/4.0/topics/class-based-views/generic-display/
