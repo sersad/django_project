@@ -24,11 +24,19 @@
 
 #### Используемые технологии
 
-- Django ORM база данных со множеством связей (например если удалить пользователя, то все его комментарии удалятся автоматически без доп запросов, тоже и с новостями)
-- Django Class-based views and dynamic filtering
-- Django templates
-- Разделение прав доступа по группам
-- Docker и docker compose
+- [x] Django ORM база данных со множеством связей (например если удалить пользователя, то все его комментарии удалятся автоматически без доп запросов, тоже и с новостями)
+- [x] Django Class-based views and dynamic filtering
+- [x] Django templates
+- [x] CSS + JS
+- [x] Bootstrap
+- [x] ААА средствами Django
+- [x] Регистрация пользователя
+- [ ] Восстановление пароля
+- [x] Управление пользователями проекта Django из кастомной админ панели 
+- [x] Разделение прав доступа по группам
+- [ ] API
+- [ ] Тесты
+- [x] Docker и docker compose
 
 #### Учетные данные
 - root:123 админка django может только комментировать
@@ -56,6 +64,7 @@
 
 `docker system prune -a -f`
 
+#### что может понадобиться
 https://www.twilio.com/blog/passwordless-authentication-system-django-twilio-verify-sendgrid?utm_campaign=Django%2BNewsletter&utm_medium=web&utm_source=Django_Newsletter_137
 
 Руководство Django Часть 8: Аутентификация и авторизация пользователя - Изучение веб-разработки
