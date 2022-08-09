@@ -9,18 +9,19 @@
 В директории `temlates` web шаблоны проекта.
 
 В директории `fixtures` данные в формате yaml для первоначальной загрузки тестовых данных в проект.
-Загрузка осуществляется 
+Загрузка первоночальных данных осуществляется 
 `docker-compose run web python manage.py loaddata data`
 Но работает только в том случае если новостей еще нет, так как новости прописаны без pk и есть ограничения на уникальность данных в таблице.
 
 #### Запуск
-Перед запуском проекта соберите контейнеры в корне
+Перед запуском проекта соберите контейнеры в корне командой
 
 `docker-compose up -d --build`
+
 #### URLs
-- django http://127.0.0.1:8000
-- админка django http://127.0.0.1:8000/admin/
-- pgadmin http://127.0.0.1:5050/browser/
+- http://127.0.0.1:8000 - django
+- http://127.0.0.1:8000/admin/ - админка django
+- http://127.0.0.1:5050/browser/ - pgadmin
 
 #### Используемые технологии
 
@@ -29,12 +30,13 @@
 - [x] Django templates
 - [x] CSS + JS
 - [x] Bootstrap
+- [x] WYSIWYG редактор для новостей
 - [x] ААА средствами Django
 - [x] Регистрация пользователя
-- [ ] Восстановление пароля
+- [ ] Восстановление пароля (необходим почтовый сервак можно его в докере поднять, но не входит в задачу проекта)
 - [x] Управление пользователями проекта Django из кастомной админ панели 
 - [x] Разделение прав доступа по группам
-- [ ] API
+- [x] API
 - [ ] Тесты
 - [ ] Логирование
 - [x] Docker и docker compose
@@ -44,28 +46,40 @@
 - editor:123 может редактировать и добавлять новости
 - reader:123 может только комментировать
 
-#### Запуск команды migrate в контейнере
+#### API URLs
+- http://127.0.0.1:8000/api/users/ - пользователи
+- http://127.0.0.1:8000/api/groups/ - группы
+- http://127.0.0.1:8000/api/news/ - новости
+- http://127.0.0.1:8000/api/category/ - категории новостей
+- http://127.0.0.1:8000/api/comments/ - комментарии
 
-`docker-compose run web python manage.py migrate`
+#### TODO
+Для формы регистрации и авторизации messages не работают
 
-#### Создание супер пользователя root
+https://docs.djangoproject.com/en/4.0/ref/contrib/messages/
+https://django.fun/docs/django/ru/4.0/ref/contrib/messages/
 
-`docker-compose run web python manage.py createsuperuser`
-пароль `123`
+Восстановление пароля
 
-#### добавление нового приложения
+https://ordinarycoders.com/blog/article/django-password-reset
+https://ordinarycoders.com/blog/article/django-user-register-login-logout
 
-`docker-compose run web python manage.py startapp news`
+Логирование
+https://docs.djangoproject.com/en/4.1/topics/logging/
 
-#### загружаем фикстуры
+Перевод веба на Traefik в контейнере
+https://testdriven.io/blog/django-docker-traefik/
+
+#### Загрузка фикстур
 
 `docker-compose run web python manage.py loaddata fixtures/data`
 
-#### очистка всего старого в докере
+#### Очистка всего старого в докере
 
 `docker system prune -a -f`
 
-#### что может понадобиться
+
+#### Разное и полезное
 https://www.twilio.com/blog/passwordless-authentication-system-django-twilio-verify-sendgrid?utm_campaign=Django%2BNewsletter&utm_medium=web&utm_source=Django_Newsletter_137
 
 Руководство Django Часть 8: Аутентификация и авторизация пользователя - Изучение веб-разработки
@@ -81,8 +95,7 @@ The login_required decorator login_required(redirect_field_name='next', login_ur
 https://docs.djangoproject.com/en/4.0/topics/auth/default/#django.contrib.auth.decorators.login_required%23django.contrib.auth.decorators.login_required
 
 
-https://ordinarycoders.com/blog/article/django-user-register-login-logout
-https://ordinarycoders.com/blog/article/django-password-reset
 
 
-login.html lost password not work
+
+

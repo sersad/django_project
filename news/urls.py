@@ -1,10 +1,24 @@
 from django.urls import path
 from .views import *
+from rest_framework import routers
+
+from django.urls import include, re_path
+
+router = routers.DefaultRouter()
+
+router.register(r'users', UserViewSet)
+router.register(r'groups', GroupViewSet)
+router.register(r'news', NewsViewSet)
+router.register(r'category', CategoryViewSet)
+router.register(r'comments', CommentsViewSet)
 
 
 urlpatterns = [
-    # path('<int:category_id>', index, name='index'),
-    # path('', index, name='index'),
+    # Привязываем наше API используя автоматическую маршрутизацию.
+    # Также мы подключим возможность авторизоваться в браузерной версии API.
+    re_path(r'^api/', include(router.urls)),
+    re_path('^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+
     path('register', register_request, name='register'),
     path('login', login_request, name='login'),
     path('<int:category_id>', IndexListView.as_view(), name='index_category'),

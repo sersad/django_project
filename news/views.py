@@ -3,17 +3,20 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django import forms
 from django.contrib import messages
+from django.contrib.auth.models import User, Group
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, CreateView, DeleteView, TemplateView, UpdateView, FormView
 from django.views.generic.edit import FormMixin, ModelFormMixin
+from rest_framework import viewsets
 
 from .forms import CommentsForm, NewsForm, UserForm, NewUserForm
 from .models import *
 
 
 # Create your views here.
+from .serializers import UserSerializer, GroupSerializer, NewsSerializer, CategorySerializer, CommentsSerializer
 
 
 class CategoriesMixin:
@@ -313,3 +316,44 @@ def login_request(request):
             messages.error(request, "Invalid username or password.")
     form = AuthenticationForm()
     return render(request=request, template_name="registration/login.html", context={"login_form": form})
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+
+    queryset = User.objects.all().order_by('-date_joined')
+    serializer_class = UserSerializer
+
+
+class GroupViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+
+
+class NewsViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows news to be viewed or edited.
+    """
+    queryset = News.objects.all()
+    serializer_class = NewsSerializer
+
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows Category to be viewed or edited.
+    """
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+
+class CommentsViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows Comments to be viewed or edited.
+    """
+    queryset = Comments.objects.all()
+    serializer_class = CommentsSerializer

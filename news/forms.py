@@ -57,6 +57,9 @@ class UserForm(forms.ModelForm):
 
 
 class NewUserForm(UserCreationForm):
+    """
+    https://django.fun/docs/django/ru/4.0/ref/contrib/messages/
+    """
     email = forms.EmailField(required=True)
 
     class Meta:
