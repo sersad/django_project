@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User, Group
 
 from news.models import Comments, News
@@ -62,6 +62,25 @@ class NewUserForm(UserCreationForm):
     class Meta:
         model = User
         fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')
+        widgets = {
+            'first_name': forms.TextInput(attrs={
+                'size': 28,
+                'type': 'form-control',
+                'placeholder': 'Enter your First Name'}),
+            'last_name': forms.TextInput(attrs={
+                'size': 28,
+                'type': 'form-control',
+                'placeholder': 'Enter your Last Name'}),
+            'username': forms.TextInput(attrs={
+                'size': 28,
+                'type': 'form-title',
+                'placeholder': 'Enter your Login'}),
+            'email': forms.TextInput(attrs={
+                'size': 28,
+                'type': 'email',
+                'placeholder': 'Enter your Email'}),
+
+        }
 
     def save(self, commit=True):
         user = super(NewUserForm, self).save(commit=False)
@@ -71,3 +90,5 @@ class NewUserForm(UserCreationForm):
             user.save()
             user.groups.add(group)
         return user
+
+

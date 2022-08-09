@@ -71,4 +71,8 @@ The login_required decorator login_required(redirect_field_name='next', login_ur
 https://docs.djangoproject.com/en/4.0/topics/auth/default/#django.contrib.auth.decorators.login_required%23django.contrib.auth.decorators.login_required
 
 
+https://ordinarycoders.com/blog/article/django-user-register-login-logout
 https://ordinarycoders.com/blog/article/django-password-reset
+
+
+login.html lost password not work

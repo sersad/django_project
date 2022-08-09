@@ -1,99 +1,79 @@
 {% extends "base_noheader.html" %}
 
 {% block body %}
-    <body class="hold-transition login-page">
+  <body class="hold-transition login-page">
 {% endblock %}
 
 {% block content %}
 
 
-    <div class="login-box">
-        <div class="login-logo">
-            <a href="/"><b>{{ title }}</b></a>
-        </div>
-        <!-- /.login-logo -->
-        <div class="card">
-            <div class="card-body login-card-body">
-                <p class="login-box-msg">Введите логин и пароль чтобы продолжить</p>
-
-                {% if next %}
-                    {% if user.is_authenticated %}
-                        <div class="alert alert-danger">Your account doesn't have access to this page. To proceed,
-                            please login with an account that has access.
-                        </div>
-                    {% else %}
-                        <div class="alert alert-danger">>Please login to see this page.</div>
-                    {% endif %}
-                {% endif %}
-
-
-                {% if form.errors %}
-                    <div class="alert alert-danger">{{ form.errors }}</div>
-                {% endif %}
-
-
-
-                <form action="{% url 'login' %}" method="post">
-                    {% csrf_token %}
-
-
-                    <div class="input-group mb-3">
-                        <table>
-                            <tr>
-                                <td>{{ form.username.label_tag }}</td>
-                                <td>{{ form.username }}</td>
-                            </tr>
-                        </table>
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <span class="fas fa-user"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="input-group mb-3">
-                        <table>
-                            <tr>
-                                <td>{{ form.password.label_tag }}</td>
-                                <td>{{ form.password }}</td>
-                            </tr>
-                        </table>
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <span class="fas fa-lock"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-8">
-                            <div class="icheck-primary">
-                                {#              {{ form.remember_me() }}#}
-                                <label for="remember">
-                                    {{ form.remember_me.label }}
-                                </label>
-                            </div>
-                        </div>
-                        <!-- /.col -->
-                        <div class="col-4">
-                            <input type="submit" value="login"/>
-                            <input type="hidden" name="next" value="{{ next }}"/>
-                        </div>
-                        <!-- /.col -->
-                    </div>
-                </form>
-
-
-                <p class="mb-0">
-                    <a href="/register" class="text-center">Зарегистрировать нового пользователя</a>
-                </p>
-                {# Assumes you setup the password_reset view in your URLconf #}
-                <p class="mb-0">
-                    <a href="{% url 'password_reset' %}">Lost password?</a>
-                </p>
-
-            </div>
-            <!-- /.login-card-body -->
-        </div>
+  <div class="login-box">
+    <div class="login-logo">
+      <a href="/"><b>{{ title }}</b></a>
     </div>
-    <!-- /.login-box -->
+    <!-- /.login-logo -->
+    <div class="card">
+      <div class="card-body login-card-body">
+        <p class="login-box-msg">Введите логин и пароль чтобы продолжить</p>
+
+
+        {% if form.errors %}
+          <div class="alert alert-danger">{{ form.errors }}</div>
+        {% endif %}
+
+
+        <form action="{% url 'login' %}" method="post" class="login-container">
+
+          {% csrf_token %}
+
+          <div class="input-group mb-3">
+            <table>
+              <tr>
+                <td>
+                  {{ login_form.username.label_tag }}
+                </td>
+                <td>
+                  {{ login_form.username }}
+                </td>
+              </tr>
+            </table>
+{#            <div class="input-group-append">#}
+{#              <div class="input-group-text">#}
+{#                <span class="fas fa-user"></span>#}
+{#              </div>#}
+{#            </div>#}
+          </div>
+          <div class="input-group mb-3">
+            <table>
+              <tr>
+                <td>
+                  {{ login_form.password.label_tag }}
+                </td>
+                <td>{{ login_form.password }}</td>
+              </tr>
+            </table>
+{#            <div class="input-group-append">#}
+{#              <div class="input-group-text">#}
+{#                <span class="fas fa-lock"></span>#}
+{#              </div>#}
+{#            </div>#}
+          </div>
+
+          <input type="submit" class="btn btn-primary btn-block" value="login"/>
+          <a type="button" href="/register" class="btn btn-primary btn-block">register</a>
+
+        </form>
+
+
+        {# Assumes you setup the password_reset view in your URLconf #}
+{#        <p class="mb-0">#}
+{#          <a href="{% url 'password_reset' %}">Lost password?</a>#}
+{#        </p>#}
+
+      </div>
+      <!-- /.login-card-body -->
+    </div>
+  </div>
+  <!-- /.login-box -->
 
 {% endblock %}

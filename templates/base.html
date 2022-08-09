@@ -74,14 +74,14 @@
         </li>
       {% else %}
 
-        {#                <li class="nav-item">#}
-        {#                            <a class="nav-link" href="{% url 'register' %}" role="button">#}
-        {#                    Зарегистрироваться#}
-        {#                    </a>#}
-        {#                </li>#}
+        <li class="nav-item">
+          <a class="nav-link" href="/register" role="button">
+            Зарегистрироваться
+          </a>
+        </li>
 
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'login' %}" role="button">
+          <a class="nav-link" href="/login" role="button">
             Войти
           </a>
         </li>
@@ -220,9 +220,9 @@
     <section class="content">
 
 
-        {% block content %}
+      {% block content %}
 
-        {% endblock %}
+      {% endblock %}
 
 
     </section>

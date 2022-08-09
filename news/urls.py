@@ -6,6 +6,7 @@ urlpatterns = [
     # path('<int:category_id>', index, name='index'),
     # path('', index, name='index'),
     path('register', register_request, name='register'),
+    path('login', login_request, name='login'),
     path('<int:category_id>', IndexListView.as_view(), name='index_category'),
     path('', IndexListView.as_view(), name='index'),
     path('about', AboutView.as_view(), name='about'),
